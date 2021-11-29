@@ -61,7 +61,7 @@ public class RetrofitService {
         return api.register(name, email, password, password_confirmation);
     }
 
-    public Call<Course> getCourse() {
+    public Call<Course> getCourses() {
         return api.getCourses();
     }
 

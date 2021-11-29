@@ -33,6 +33,6 @@ public interface ApiEndPoints {
     @GET("users")
     Call<Profile> getProfile();
 
-    @GET("logout")
+    @POST("logout")
     Call<JsonObject> logout();
 }

@@ -27,7 +27,7 @@ public class CourseViewModel extends AndroidViewModel {
     private MutableLiveData<Course> resultCourses = new MutableLiveData<>();
 
     public void getCourses() {
-        resultCourses = courseRepository.getCourse();
+        resultCourses = courseRepository.getCourses();
     }
 
     public LiveData<Course> getResultCourses() {
