@@ -31,7 +31,7 @@ public class RetrofitService {
             client.addInterceptor(chain -> {
                 Request request = chain.request().newBuilder()
                         .addHeader("Accept", "application/json")
-                        .addHeader("Authentication", token)
+                        .addHeader("Authorization", token)
                         .build();
                 return chain.proceed(request);
             });
