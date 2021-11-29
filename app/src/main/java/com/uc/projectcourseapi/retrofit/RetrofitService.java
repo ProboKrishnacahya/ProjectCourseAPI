@@ -1,6 +1,8 @@
 package com.uc.projectcourseapi.retrofit;
 
+import com.google.gson.JsonObject;
 import com.uc.projectcourseapi.helper.Const;
+import com.uc.projectcourseapi.model.Course;
 import com.uc.projectcourseapi.model.RegisterResponse;
 import com.uc.projectcourseapi.model.TokenResponse;
 
@@ -57,5 +59,13 @@ public class RetrofitService {
 
     public Call<RegisterResponse> register(String name, String email, String password, String password_confirmation) {
         return api.register(name, email, password, password_confirmation);
+    }
+
+    public Call<Course> getCourse() {
+        return api.getCourses();
+    }
+
+    public Call<JsonObject> logout() {
+        return api.logout();
     }
 }

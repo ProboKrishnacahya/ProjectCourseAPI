@@ -1,5 +1,6 @@
 package com.uc.projectcourseapi.retrofit;
 
+import com.google.gson.JsonObject;
 import com.uc.projectcourseapi.model.Course;
 import com.uc.projectcourseapi.model.Profile;
 import com.uc.projectcourseapi.model.Project;
@@ -31,4 +32,7 @@ public interface ApiEndPoints {
 
     @GET("users")
     Call<Profile> getProfile();
+
+    @GET("logout")
+    Call<JsonObject> logout();
 }
