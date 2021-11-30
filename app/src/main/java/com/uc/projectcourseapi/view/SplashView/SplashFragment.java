@@ -1,18 +1,17 @@
 package com.uc.projectcourseapi.view.SplashView;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.uc.projectcourseapi.R;
 import com.uc.projectcourseapi.helper.SharedPreferenceHelper;
@@ -24,7 +23,7 @@ import com.uc.projectcourseapi.view.MainActivity;
  * create an instance of this fragment.
  */
 public class SplashFragment extends Fragment {
-    private static int splashtime = 2500;
+    private static int splashtime = 500;
     private static final String TAG = "SplashFragment";
 
     // TODO: Rename parameter arguments, choose names that match

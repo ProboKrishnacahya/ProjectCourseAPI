@@ -65,6 +65,14 @@ public class RetrofitService {
         return api.getCourses();
     }
 
+    public Call<Course> getCourseDetail(String code) {
+        return api.getCourseDetail(code);
+    }
+
+    public Call<Course.Courses> createCourses(Course.Courses course) {
+        return api.createCourses(course);
+    }
+
     public Call<JsonObject> logout() {
         return api.logout();
     }

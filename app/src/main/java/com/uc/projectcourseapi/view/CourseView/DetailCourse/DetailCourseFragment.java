@@ -1,14 +1,25 @@
 package com.uc.projectcourseapi.view.CourseView.DetailCourse;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.uc.projectcourseapi.R;
+import com.uc.projectcourseapi.helper.SharedPreferenceHelper;
+import com.uc.projectcourseapi.model.Course;
+import com.uc.projectcourseapi.view.CourseView.CourseViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +27,15 @@ import com.uc.projectcourseapi.R;
  * create an instance of this fragment.
  */
 public class DetailCourseFragment extends Fragment {
+
+    Toolbar toolbar;
+    TextView detailCourseCode, detailCourseTitle, detailCourseLecturer,
+            detailCourseSks, detailCourseDesc;
+
+    private static final String TAG = "DetailCourseFragment";
+
+    private CourseViewModel courseViewModel;
+    private SharedPreferenceHelper helper;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,4 +83,53 @@ public class DetailCourseFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail_course, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        toolbar = getActivity().findViewById(R.id.toolbar_main);
+        toolbar.setTitle("Courses");
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.getNavigationIcon().setColorFilter(getResources()
+                .getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+
+        detailCourseCode = view.findViewById(R.id.detail_course_code);
+        detailCourseTitle = view.findViewById(R.id.detail_course_title);
+        detailCourseLecturer = view.findViewById(R.id.detail_course_lecturer);
+        detailCourseDesc = view.findViewById(R.id.detail_course_description);
+
+        helper = SharedPreferenceHelper.getInstance(requireActivity());
+        courseViewModel = new ViewModelProvider(getActivity()).get(CourseViewModel.class);
+        courseViewModel.init(helper.getAccessToken());
+        String code = getArguments().getString("course_code");
+        Log.d(TAG, "course_code: " + code);
+        courseViewModel.getCourseDetail(code);
+        courseViewModel.getResultCourseDetail().observe(getActivity(), showCourseDetail);
+    }
+
+    private Observer<Course> showCourseDetail = new Observer<Course>() {
+        @Override
+        public void onChanged(Course course) {
+            Course.Courses resultCourse = course.getCourses().get(0);
+            if (course == null) {
+                detailCourseCode.setText("Unknown");
+                detailCourseTitle.setText("Unknown");
+                detailCourseLecturer.setText("Unknown");
+                detailCourseSks.setText("Unknown");
+                detailCourseDesc.setText("Unknown");
+            } else {
+                String codeCourse = resultCourse.getCourse_code();
+                String title = resultCourse.getCourse_name();
+                String lecturer = resultCourse.getLecturer();
+                int sks = resultCourse.getNumber_sks();
+                String desc = resultCourse.getDescription();
+
+                detailCourseCode.setText(codeCourse);
+                detailCourseTitle.setText(title);
+                detailCourseLecturer.setText(lecturer);
+                detailCourseSks.setText(String.valueOf(sks));
+                detailCourseDesc.setText(desc);
+            }
+        }
+    };
 }

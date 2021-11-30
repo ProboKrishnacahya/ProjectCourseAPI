@@ -24,6 +24,7 @@ public class CourseViewModel extends AndroidViewModel {
         courseRepository = CourseRepository.getInstance(token);
     }
 
+    //get all course
     private MutableLiveData<Course> resultCourses = new MutableLiveData<>();
 
     public void getCourses() {
@@ -33,4 +34,16 @@ public class CourseViewModel extends AndroidViewModel {
     public LiveData<Course> getResultCourses() {
         return resultCourses;
     }
+
+    //get detail course
+    private MutableLiveData<Course> resultCourseDetail = new MutableLiveData<>();
+
+    public void getCourseDetail(String code) {
+        resultCourseDetail = courseRepository.getCourseDetail(code);
+    }
+
+    public LiveData<Course> getResultCourseDetail() {
+        return resultCourseDetail;
+    }
+
 }

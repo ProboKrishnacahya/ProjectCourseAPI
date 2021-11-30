@@ -8,10 +8,12 @@ import com.uc.projectcourseapi.model.RegisterResponse;
 import com.uc.projectcourseapi.model.TokenResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ApiEndPoints {
     @POST("login")
@@ -26,6 +28,12 @@ public interface ApiEndPoints {
 
     @GET("courses")
     Call<Course> getCourses();
+
+    @GET("courses/{course}")
+    Call<Course> getCourseDetail(@Path("course") String code);
+
+    @POST("courses")
+    Call<Course.Courses> createCourses(@Body Course.Courses course);
 
     @GET("projects")
     Call<Project> getProjects();
