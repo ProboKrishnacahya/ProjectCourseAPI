@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Course implements Parcelable {
     private List<Courses> courses;
+    private String message;
 
     protected Course(Parcel in) {
     }
@@ -45,6 +46,14 @@ public class Course implements Parcelable {
 
     public void setCourses(List<Courses> courses) {
         this.courses = courses;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public static class Courses {

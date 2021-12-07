@@ -37,7 +37,7 @@ public interface ApiEndPoints {
     @POST("courses")
     Call<Course.Courses> createCourses(@Body Course.Courses course);
 
-    @PUT("courses/{courses}")
+    @PUT("courses/{course}")
     Call<Course.Courses> editCourses(@Path("course") String code, @Body Course.Courses course);
 
     @DELETE("courses/{course}")

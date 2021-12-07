@@ -50,7 +50,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CardViewVi
         holder.cardView.setOnClickListener(view -> {
             Bundle bundle = new Bundle();
             bundle.putString("course_code", results.getCourse_code().toUpperCase());
-            Navigation.findNavController(view).navigate(R.id.action_courseFragment2_to_detailCourseFragment);
+            Navigation.findNavController(view).navigate(R.id.action_courseFragment2_to_detailCourseFragment, bundle);
         });
     }
 
