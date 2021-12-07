@@ -26,4 +26,8 @@ public class AddCourseViewModel extends AndroidViewModel {
     public MutableLiveData<Course.Courses> createCourse(Course.Courses courses) {
         return courseRepository.createCourse(courses);
     }
+
+    public MutableLiveData<Course.Courses> editCourse(String code, Course.Courses courses) {
+        return courseRepository.editCourse(code, courses);
+    }
 }

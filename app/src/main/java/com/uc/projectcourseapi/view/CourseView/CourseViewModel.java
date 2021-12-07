@@ -46,4 +46,15 @@ public class CourseViewModel extends AndroidViewModel {
         return resultCourseDetail;
     }
 
+    //to delete specific course
+    public LiveData<String> deleteCourse(String code){
+        return courseRepository.deleteCourse(code);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        Log.d(TAG, "onCleared: ");
+        courseRepository.resetInstance();
+    }
 }

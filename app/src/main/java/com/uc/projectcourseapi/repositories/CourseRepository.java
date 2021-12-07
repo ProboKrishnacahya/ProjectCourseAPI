@@ -4,8 +4,12 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.uc.projectcourseapi.model.Course;
 import com.uc.projectcourseapi.retrofit.RetrofitService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -101,5 +105,52 @@ public class CourseRepository {
         });
 
         return listAddCourse;
+    }
+
+    public MutableLiveData<Course.Courses> editCourse(String code, Course.Courses courses) {
+        final MutableLiveData<Course.Courses> listEditCourse = new MutableLiveData<>();
+        apiService.editCourses(code, courses).enqueue(new Callback<Course.Courses>() {
+            @Override
+            public void onResponse(Call<Course.Courses> call, Response<Course.Courses> response) {
+                Log.d(TAG, "onResponse: " + response.body());
+                listEditCourse.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Course.Courses> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+
+        return listEditCourse;
+    }
+
+    public MutableLiveData<String> deleteCourse(String code) {
+        MutableLiveData<String> message = new MutableLiveData<>();
+        apiService.deleteCourses(code).enqueue(new Callback<Course>() {
+            @Override
+            public void onResponse(Call<Course> call, Response<Course> response) {
+                Log.d(TAG, "onResponse: " + response.code());
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        try {
+                            JSONObject object = new JSONObject(new Gson().toJson(response.body()));
+                            String msg = object.getString("message");
+                            Log.d(TAG, "result: " + msg);
+                            message.postValue(msg);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Course> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+
+        return message;
     }
 }

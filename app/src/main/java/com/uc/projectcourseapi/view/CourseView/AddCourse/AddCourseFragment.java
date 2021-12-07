@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -20,6 +21,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.uc.projectcourseapi.R;
 import com.uc.projectcourseapi.helper.SharedPreferenceHelper;
 import com.uc.projectcourseapi.model.Course;
+import com.uc.projectcourseapi.view.CourseView.CourseViewModel;
 
 public class AddCourseFragment extends Fragment {
     Toolbar toolbar;
@@ -28,6 +30,7 @@ public class AddCourseFragment extends Fragment {
     Button btn_submit_course;
 
     private AddCourseViewModel addCourseViewModel;
+    private CourseViewModel courseViewModel;
     private SharedPreferenceHelper helper;
     private static final String TAG = "AddCourseFragment";
 
@@ -55,6 +58,7 @@ public class AddCourseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        String pageCode = getArguments().getString("course_code");
         toolbar = getActivity().findViewById(R.id.toolbar_main);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setTitle("Add Course");
@@ -70,36 +74,98 @@ public class AddCourseFragment extends Fragment {
         addCourseViewModel = new ViewModelProvider(getActivity()).get(AddCourseViewModel.class);
         addCourseViewModel.init(helper.getAccessToken());
 
-        btn_submit_course.setOnClickListener(view1 -> {
-            if (!courseCode.getEditText().getText().toString().isEmpty()
-                    && !courseTitle.getEditText().getText().toString().isEmpty()
-                    && !courseLecturer.getEditText().getText().toString().isEmpty()
-                    && !courseSks.getEditText().getText().toString().isEmpty()
-                    && !courseDesc.getEditText().getText().toString().isEmpty()) {
-                String code = courseCode.getEditText().getText().toString().trim();
-                String title = courseTitle.getEditText().getText().toString().trim();
-                String lecturer = courseLecturer.getEditText().getText().toString().trim();
-                String sks = courseSks.getEditText().getText().toString().trim();
-                String desc = courseDesc.getEditText().getText().toString().trim();
+        if (pageCode == null) {
+            toolbar.setTitle("Add Course");
 
-                Course.Courses courses = addCourseData(code, title, lecturer, sks, desc);
-                addCourseViewModel.createCourse(courses).observe(requireActivity(), courses1 -> {
-                    if (courses1 != null) {
-                        NavDirections actions = AddCourseFragmentDirections.actionAddCourseFragmentToCourseFragment2();
-                        Navigation.findNavController(view1).navigate(actions);
-                        Toast.makeText(requireActivity(), "Add Course Success", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(requireActivity(), "Add Course Failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Toast.makeText(requireActivity(), "All field must not empty", Toast.LENGTH_SHORT).show();
-            }
-        });
+            btn_submit_course.setOnClickListener(view1 -> {
+                if (!courseCode.getEditText().getText().toString().isEmpty()
+                        && !courseTitle.getEditText().getText().toString().isEmpty()
+                        && !courseLecturer.getEditText().getText().toString().isEmpty()
+                        && !courseSks.getEditText().getText().toString().isEmpty()
+                        && !courseDesc.getEditText().getText().toString().isEmpty()) {
+                    String code = courseCode.getEditText().getText().toString().trim();
+                    String title = courseTitle.getEditText().getText().toString().trim();
+                    String lecturer = courseLecturer.getEditText().getText().toString().trim();
+                    String sks = courseSks.getEditText().getText().toString().trim();
+                    String desc = courseDesc.getEditText().getText().toString().trim();
+
+                    Course.Courses courses = addCourseData(code, title, lecturer, sks, desc);
+                    addCourseViewModel.createCourse(courses).observe(requireActivity(), courses1 -> {
+                        if (courses1 != null) {
+                            NavDirections actions = AddCourseFragmentDirections.actionAddCourseFragmentToCourseFragment2();
+                            Navigation.findNavController(view1).navigate(actions);
+                            Toast.makeText(requireActivity(), "Add Course Success", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireActivity(), "Add Course Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(requireActivity(), "All field must not empty", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            toolbar.setTitle("Edit Course");
+
+            courseViewModel = new ViewModelProvider(getActivity()).get(CourseViewModel.class);
+            courseViewModel.init(helper.getAccessToken());
+            courseViewModel.getCourseDetail(pageCode);
+            courseViewModel.getResultCourseDetail().observe(getActivity(), getCourseDetail);
+
+            btn_submit_course.setOnClickListener(view12 -> {
+                if (!courseCode.getEditText().getText().toString().isEmpty()
+                        && !courseTitle.getEditText().getText().toString().isEmpty()
+                        && !courseLecturer.getEditText().getText().toString().isEmpty()
+                        && !courseSks.getEditText().getText().toString().isEmpty()
+                        && !courseDesc.getEditText().getText().toString().isEmpty()) {
+                    String code = courseCode.getEditText().getText().toString().trim();
+                    String title = courseTitle.getEditText().getText().toString().trim();
+                    String lecturer = courseLecturer.getEditText().getText().toString().trim();
+                    String sks = courseSks.getEditText().getText().toString().trim();
+                    String desc = courseDesc.getEditText().getText().toString().trim();
+                    Course.Courses courses = addCourseData(code, title, lecturer, sks, desc);
+                    addCourseViewModel.editCourse(pageCode, courses).observe(requireActivity(), courses1 -> {
+                        if (courses1 != null) {
+                            NavDirections actions = AddCourseFragmentDirections.actionAddCourseFragmentToCourseFragment2();
+                            Navigation.findNavController(view12).navigate(actions);
+                            Toast.makeText(requireActivity(), "Edit Course Success", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireActivity(), "Edit Course Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(requireActivity(), "All field must not empty", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private Course.Courses addCourseData(String code, String title, String lecturer, String sks, String desc) {
         Course.Courses courses = new Course.Courses(code, title, lecturer, Integer.parseInt(sks), desc);
         return courses;
     }
+
+    private Observer<Course> getCourseDetail = new Observer<Course>() {
+        @Override
+        public void onChanged(Course course) {
+            Course.Courses resultDetail = course.getCourses().get(0);
+            if (course == null) {
+                courseCode.getEditText().setText("Unknown");
+                courseTitle.getEditText().setText("Unknown");
+                courseLecturer.getEditText().setText("Unknown");
+                courseSks.getEditText().setText("Unknown");
+                courseDesc.getEditText().setText("Unknown");
+            } else {
+                String codeCourse = resultDetail.getCourse_code();
+                String courseName = resultDetail.getCourse_name();
+                String lecturer = resultDetail.getLecturer();
+                int sks = resultDetail.getNumber_sks();
+                String desc = resultDetail.getDescription();
+                courseCode.getEditText().setText(codeCourse);
+                courseTitle.getEditText().setText(courseName);
+                courseLecturer.getEditText().setText(lecturer);
+                courseSks.getEditText().setText(String.valueOf(sks));
+                courseDesc.getEditText().setText(desc);
+            }
+        }
+    };
 }
